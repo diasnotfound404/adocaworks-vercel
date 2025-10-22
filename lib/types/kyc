@@ -12,8 +12,6 @@ export type TransactionStatus = "pending" | "processing" | "completed" | "failed
 
 export type DisputeStatus = "open" | "under_review" | "resolved" | "closed"
 
-export type KYCStatus = "pending" | "approved" | "rejected"
-
 export interface Profile {
   id: string
   email: string
@@ -28,7 +26,6 @@ export interface Profile {
   rating: number
   total_reviews: number
   balance: number
-  kyc_verified: boolean
   created_at: string
   updated_at: string
 }
@@ -125,20 +122,4 @@ export interface AuditLog {
   ip_address: string | null
   user_agent: string | null
   created_at: string
-}
-
-export interface KYCData {
-  id: string
-  user_id: string
-  document_type: "cpf" | "cnpj" | "rg" | "passport"
-  document_number: string
-  document_front_url: string | null
-  document_back_url: string | null
-  selfie_url: string | null
-  status: KYCStatus
-  rejection_reason: string | null
-  verified_at: string | null
-  verified_by: string | null
-  created_at: string
-  updated_at: string
 }
