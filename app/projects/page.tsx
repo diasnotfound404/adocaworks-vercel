@@ -4,10 +4,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { Calendar, DollarSign, Briefcase } from "lucide-react"
+import { Calendar, DollarSign, Briefcase, Filter } from "lucide-react"
 import { AppHeader } from "@/components/app-header"
 
-export default async function ProjectsPage() {
+// NEW FEATURE - Add searchParams for filtering
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: { category?: string; subcategory?: string }
+}) {
   const supabase = await createClient()
 
   const {
@@ -35,6 +40,15 @@ export default async function ProjectsPage() {
       profiles:client_id (
         full_name,
         avatar_url
+      ),
+      categories (
+        id,
+        name,
+        color
+      ),
+      subcategories (
+        id,
+        name
       )
     `,
     )
@@ -48,7 +62,18 @@ export default async function ProjectsPage() {
     projectsQuery = projectsQuery.eq("status", "open")
   }
 
+  // NEW FEATURE - Apply category filters
+  if (searchParams.category) {
+    projectsQuery = projectsQuery.eq("category_id", searchParams.category)
+  }
+  if (searchParams.subcategory) {
+    projectsQuery = projectsQuery.eq("subcategory_id", searchParams.subcategory)
+  }
+
   const { data: projects } = await projectsQuery
+
+  // NEW FEATURE - Fetch categories for filter display
+  const { data: categories } = await supabase.from("categories").select("*").order("name")
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -62,15 +87,43 @@ export default async function ProjectsPage() {
               {isClient ? "Gerencie seus projetos e propostas" : "Encontre projetos que combinam com você"}
             </p>
           </div>
-          {isClient && (
-            <Link href="/projects/new">
-              <Button>
-                <Briefcase className="mr-2 h-4 w-4" />
-                Criar Projeto
+          <div className="flex gap-2">
+            {/* NEW FEATURE - Link to categories page */}
+            {!isClient && (
+              <Link href="/categories">
+                <Button variant="outline">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Categorias
+                </Button>
+              </Link>
+            )}
+            {isClient && (
+              <Link href="/projects/new">
+                <Button>
+                  <Briefcase className="mr-2 h-4 w-4" />
+                  Criar Projeto
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* NEW FEATURE - Active filters display */}
+        {(searchParams.category || searchParams.subcategory) && (
+          <div className="mb-6 flex items-center gap-2">
+            <span className="text-sm text-gray-600">Filtros ativos:</span>
+            {searchParams.category && (
+              <Badge variant="secondary">
+                {categories?.find((c) => c.id === searchParams.category)?.name || "Categoria"}
+              </Badge>
+            )}
+            <Link href="/projects">
+              <Button variant="ghost" size="sm">
+                Limpar filtros
               </Button>
             </Link>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Projects List */}
         {!projects || projects.length === 0 ? (
@@ -134,7 +187,20 @@ export default async function ProjectsPage() {
                         <span>Prazo: {new Date(project.deadline).toLocaleDateString("pt-BR")}</span>
                       </div>
                     )}
-                    <Badge variant="outline">{project.category}</Badge>
+                    {/* NEW FEATURE - Display category badge with color */}
+                    {project.categories && (
+                      <Badge
+                        variant="outline"
+                        style={{
+                          borderColor: project.categories.color,
+                          color: project.categories.color,
+                        }}
+                      >
+                        {project.categories.name}
+                      </Badge>
+                    )}
+                    {/* NEW FEATURE - Display subcategory if exists */}
+                    {project.subcategories && <Badge variant="secondary">{project.subcategories.name}</Badge>}
                   </div>
                   <div className="mt-4 flex gap-2">
                     <Link href={`/projects/${project.id}`}>

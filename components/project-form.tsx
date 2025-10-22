@@ -9,24 +9,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createProject } from "@/lib/actions/projects"
+import { CategorySelect } from "@/components/category-select"
+import type { Category, Subcategory } from "@/lib/types/categories"
 
-const categories = [
-  "Desenvolvimento Web",
-  "Desenvolvimento Mobile",
-  "Design Gráfico",
-  "Marketing Digital",
-  "Redação e Tradução",
-  "Vídeo e Animação",
-  "Consultoria",
-  "Outros",
-]
+// NEW FEATURE - Added categories and subcategories props
+interface ProjectFormProps {
+  categories: Category[]
+  subcategories: Subcategory[]
+}
 
-export function ProjectForm() {
+export function ProjectForm({ categories, subcategories }: ProjectFormProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // NEW FEATURE - State for category selection
+  const [categoryId, setCategoryId] = useState<string>("")
+  const [subcategoryId, setSubcategoryId] = useState<string>("")
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -34,6 +33,9 @@ export function ProjectForm() {
     setError(null)
 
     const formData = new FormData(e.currentTarget)
+    // NEW FEATURE - Add category and subcategory to form data
+    if (categoryId) formData.set("category_id", categoryId)
+    if (subcategoryId) formData.set("subcategory_id", subcategoryId)
 
     try {
       const result = await createProject(formData)
@@ -65,21 +67,15 @@ export function ProjectForm() {
             <Input id="title" name="title" placeholder="Ex: Desenvolvimento de site institucional" required />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="category">Categoria *</Label>
-            <Select name="category" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione uma categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* NEW FEATURE - Category selection component */}
+          <CategorySelect
+            categoryId={categoryId}
+            subcategoryId={subcategoryId}
+            onCategoryChange={setCategoryId}
+            onSubcategoryChange={setSubcategoryId}
+            categories={categories}
+            subcategories={subcategories}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="description">Descrição *</Label>

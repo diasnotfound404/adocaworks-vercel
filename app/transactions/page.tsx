@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { DollarSign, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import { DownloadReceiptButton } from "@/components/download-receipt-button"
 
 export default async function TransactionsPage() {
   const supabase = await createClient()
@@ -129,6 +130,14 @@ export default async function TransactionsPage() {
                           <p className="text-xs text-gray-500">
                             {new Date(transaction.created_at).toLocaleString("pt-BR")}
                           </p>
+                          {transaction.status === "completed" && (
+                            <div className="mt-3">
+                              <DownloadReceiptButton
+                                transactionId={transaction.id}
+                                transactionCode={transaction.code}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="text-right">

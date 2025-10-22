@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ProjectForm } from "@/components/project-form"
+import { createServerClient } from "@/lib/supabase/server"
 
 export default async function NewProjectPage() {
   const supabase = await createClient()
@@ -20,6 +21,11 @@ export default async function NewProjectPage() {
   if (!profile || profile.user_type !== "client") {
     redirect("/dashboard")
   }
+
+  // NEW FEATURE - Fetch categories and subcategories
+  const supabaseServer = await createServerClient()
+  const { data: categories } = await supabaseServer.from("categories").select("*").order("name")
+  const { data: subcategories } = await supabaseServer.from("subcategories").select("*").order("name")
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,7 +46,8 @@ export default async function NewProjectPage() {
           <p className="mt-2 text-gray-600">Preencha os detalhes do seu projeto para receber propostas</p>
         </div>
 
-        <ProjectForm />
+        {/* NEW FEATURE - Pass categories and subcategories to form */}
+        <ProjectForm categories={categories || []} subcategories={subcategories || []} />
       </main>
     </div>
   )

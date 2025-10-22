@@ -27,11 +27,15 @@ export async function createProject(formData: FormData) {
   const title = formData.get("title") as string
   const description = formData.get("description") as string
   const category = formData.get("category") as string
+  // NEW FEATURE - Get category_id and subcategory_id
+  const categoryId = formData.get("category_id") as string
+  const subcategoryId = formData.get("subcategory_id") as string
   const budgetMin = Number.parseFloat(formData.get("budget_min") as string)
   const budgetMax = Number.parseFloat(formData.get("budget_max") as string)
   const deadline = formData.get("deadline") as string
 
-  if (!title || !description || !category || !budgetMin || !budgetMax) {
+  // NEW FEATURE - Updated validation to require category_id
+  if (!title || !description || !categoryId || !budgetMin || !budgetMax) {
     return { error: "Todos os campos obrigatórios devem ser preenchidos" }
   }
 
@@ -61,7 +65,10 @@ export async function createProject(formData: FormData) {
       client_id: user.id,
       title,
       description,
-      category,
+      category, // Keep old category field for backward compatibility
+      // NEW FEATURE - Add category_id and subcategory_id
+      category_id: categoryId,
+      subcategory_id: subcategoryId || null,
       budget_min: budgetMin,
       budget_max: budgetMax,
       deadline: deadline || null,
@@ -81,7 +88,14 @@ export async function createProject(formData: FormData) {
     entityType: "project",
     entityId: project.id,
     entityCode: project.code,
-    details: { title, category, budget_min: budgetMin, budget_max: budgetMax },
+    // NEW FEATURE - Include category_id in audit log
+    details: {
+      title,
+      category_id: categoryId,
+      subcategory_id: subcategoryId,
+      budget_min: budgetMin,
+      budget_max: budgetMax,
+    },
   })
 
   revalidatePath("/projects")
