@@ -1,29 +1,33 @@
+// components/ui/button.tsx
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-// Estilo mais limpo e Material Design-like
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-sm hover:shadow-md text-sm",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
         default:
-          "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800",
+          "bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary/70 dark:hover:bg-primary/80",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-100 active:bg-neutral-200",
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
-          "bg-neutral-200 text-neutral-900 hover:bg-neutral-300 active:bg-neutral-400",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
-          "bg-transparent text-neutral-800 hover:bg-neutral-100 active:bg-neutral-200",
-        link: "text-blue-600 hover:underline underline-offset-4",
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-5 py-2",
-        sm: "h-8 px-3 text-sm",
-        lg: "h-12 px-6 text-base",
-        icon: "h-10 w-10 flex items-center justify-center",
+        default: "h-9 px-5 py-2",
+        sm: "h-8 px-3 py-1.5",
+        lg: "h-10 px-6 py-3",
+        icon: "h-9 w-9",
+        "icon-sm": "h-8 w-8",
+        "icon-lg": "h-10 w-10",
       },
     },
     defaultVariants: {
@@ -44,7 +48,6 @@ function Button({
     asChild?: boolean;
   }) {
   const Comp = asChild ? Slot : "button";
-
   return (
     <Comp
       data-slot="button"
