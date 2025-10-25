@@ -35,6 +35,29 @@ const buttonVariants = cva(
       size: "default",
     },
   }
+); // <-- The definition of buttonVariants ends here
+
+function Button({
+  className,
+  variant,
+  size,
+  asChild = false,
+  ...props
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+  }) {
+  const Comp = asChild ? Slot : "button";
+  return (
+    <Comp
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  );
+}
+
+export { Button, buttonVariants }; // <-- The file should end here!  }
 );
 
 function Button({
