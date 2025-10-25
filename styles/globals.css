@@ -3,7 +3,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+  Atualizado: merge do seu tema atual com o Design System moderno.
+  - Mantive suas variáveis OKLCH e o tema .dark
+  - Adicionei tokens derivados (radius, shadows, typografia)
+  - Adicionei primitives (btn, card, input, avatar, chip, grid)
+  - Preservada a camada de @theme inline e @layer base
+  - Compatível com Tailwind (exporta variáveis para uso em tailwind.config.js)
+*/
+
 :root {
+  /* --- suas variáveis originais (preservadas) --- */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -37,9 +47,40 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* --- design system additions --- */
+  --font-sans: 'Inter', 'Roboto', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  --type-body: 16px;
+  --type-sm: 14px;
+  --type-lg: 18px;
+  --type-xl: 20px;
+  --type-2xl: 28px;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-xs: 0 1px 2px rgba(16,24,40,0.04);
+  --shadow-sm: 0 4px 8px rgba(16,24,40,0.06);
+  --shadow-md: 0 10px 20px rgba(16,24,40,0.08);
+  --shadow-lg: 0 20px 40px rgba(16,24,40,0.12);
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+
+  --motion-fast: 120ms;
+  --motion-medium: 220ms;
+  --motion-slow: 360ms;
+
+  --focus-ring: 3px;
 }
 
 .dark {
+  /* preserve suas overrides de dark e manter tokens adicionais */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
@@ -72,6 +113,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  --font-sans: 'Inter', 'Roboto', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  /* shadows adapt for dark */
+  --shadow-xs: 0 1px 2px rgba(2,6,23,0.6);
+  --shadow-sm: 0 6px 12px rgba(2,6,23,0.6);
+  --shadow-md: 0 14px 28px rgba(2,6,23,0.6);
+  --shadow-lg: 0 28px 56px rgba(2,6,23,0.6);
 }
 
 @theme inline {
@@ -115,6 +163,79 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* =====================
+  Primitives / Components (modern, Google-inspired)
+   - use as utility classes alongside Tailwind
+   - keep selectors simple so Tailwind can override if needed
+   ===================== */
+
+/* base reset helpers */
+@layer base {
+  * { box-sizing: border-box; }
+  html, body, #__next { height: 100%; }
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--type-body);
+    background: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1 { font-size: var(--type-2xl); font-weight: 700; margin: 0 0 0.6rem; }
+  h2 { font-size: var(--type-xl); font-weight: 600; margin: 0 0 0.5rem; }
+  p { margin: 0 0 1rem; }
+}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  padding: 10px 16px;border-radius:var(--radius-md);font-weight:600;cursor:pointer;border:0;
+  transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease, background-color var(--motion-fast) ease;
+}
+.btn:active{transform: translateY(1px)}
+
+.btn-primary{background: linear-gradient(180deg,var(--color-primary), color-mix(in srgb, var(--color-primary) 70% , black)); color: var(--color-primary-foreground); box-shadow: var(--shadow-sm);}
+.btn-primary:focus{outline:none; box-shadow: 0 0 0 var(--focus-ring) color-mix(in srgb, var(--color-primary) 20%, transparent);}
+
+.btn-ghost{background:transparent;color:var(--color-primary);border:1px solid color-mix(in srgb,var(--color-primary) 12%, transparent);}
+.btn-outline{background:transparent;color:var(--color-foreground);border:1px solid color-mix(in srgb,var(--color-border) 14%, transparent);}
+
+/* Card */
+.card{background:var(--color-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:var(--space-md);overflow:hidden}
+.card--flat{box-shadow:var(--shadow-sm)}
+
+/* Input */
+.input{width:100%;padding:12px 14px;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-input);font-size:var(--type-body)}
+.input:focus{outline:none;box-shadow:0 0 0 var(--focus-ring) color-mix(in srgb,var(--color-primary) 18%, transparent);border-color:var(--color-primary)}
+
+/* Avatar / chip / badge */
+.avatar{width:44px;height:44px;border-radius:999px;overflow:hidden;display:inline-block;background:linear-gradient(45deg,var(--color-card),var(--color-popover));box-shadow:var(--shadow-xs)}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-weight:500;background:var(--color-card);box-shadow:var(--shadow-xs)}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;background:color-mix(in srgb,var(--color-primary) 8%, transparent);color:var(--color-primary);font-weight:600}
+
+/* Layout helpers */
+.container{max-width:1200px;margin-left:auto;margin-right:auto;padding-left:var(--space-md);padding-right:var(--space-md)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:960px){.grid-3{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.grid-3{grid-template-columns:1fr}}
+
+/* Misc */
+.sep{height:1px;background:color-mix(in srgb,var(--color-border) 8%, transparent);margin:8px 0}
+.small{font-size:var(--type-sm);color:var(--color-muted-foreground)}
+.rating{display:flex;gap:6px;align-items:center}
+.elev-xs{box-shadow:var(--shadow-xs)}
+.elev-sm{box-shadow:var(--shadow-sm)}
+.elev-md{box-shadow:var(--shadow-md)}
+.elev-lg{box-shadow:var(--shadow-lg)}
+
+/* Accessibility */
+:focus{outline-offset:2px}
+a{color:var(--color-primary);text-decoration:none}
+a:hover{text-decoration:underline}
+
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}}
+
+/* Keep your original base layer rules (for compatibility) */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -123,3 +244,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Notes for tailwind.config.js
+
+Add the following to theme.extend in your tailwind.config.js to map css variables to tailwind tokens:
+
+extend: {
+  colors: {
+    background: 'var(--color-background)',
+    foreground: 'var(--color-foreground)',
+    primary: 'var(--color-primary)',
+    'primary-foreground': 'var(--color-primary-foreground)',
+    card: 'var(--color-card)'
+  },
+  borderRadius: {
+    md: 'var(--radius-md)',
+    lg: 'var(--radius-lg)'
+  },
+  boxShadow: {
+    xs: 'var(--shadow-xs)',
+    sm: 'var(--shadow-sm)',
+    md: 'var(--shadow-md)'
+  },
+  fontFamily: {
+    sans: ['Inter', 'Roboto', 'system-ui']
+  }
+}
+
+*/
