@@ -27,12 +27,28 @@ body {
 /* =========================================================
    🎨 Tokens adicionais (sem sobrescrever Tailwind)
    ========================================================= */
+/* =========================================================
+   🎨 Tokens adicionais (sem sobrescrever Tailwind)
+   ========================================================= */
 :root {
   --my-bg-gradient: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
   --my-shadow-elevated: 0 4px 10px rgba(0, 0, 0, 0.1);
   --my-radius: 0.75rem;
   --my-transition: all 0.2s ease-in-out;
+
+  /* Cor de background padrão preta */
+  --background: #000000;
+  --foreground: #ffffff; /* Texto branco */
 }
+
+/* =========================================================
+   🌙 Dark mode helpers
+   ========================================================= */
+.dark body {
+  background-color: #000000;
+  color: #ffffff;
+}
+
 
 /* =========================================================
    🧩 Elementos base
