@@ -272,3 +272,28 @@ extend: {
 }
 
 */
+/* ====== Teste visual: botões arredondados ====== */
+button,
+.button,
+.btn {
+  @apply rounded-full px-5 py-2 font-medium transition-all duration-200 ease-in-out;
+  border-radius: 9999px; /* fallback */
+}
+
+/* Adiciona um efeito visual pra facilitar ver se está ativo */
+button:hover,
+.button:hover,
+.btn:hover {
+  @apply opacity-90 scale-105 shadow-md;
+}
+
+/* Se quiser forçar todas as variantes de botão Tailwind (caso use shadcn/ui) */
+.btn-primary,
+button.bg-primary {
+  @apply bg-primary text-primary-foreground;
+}
+
+.btn-secondary,
+button.bg-secondary {
+  @apply bg-secondary text-secondary-foreground;
+}
